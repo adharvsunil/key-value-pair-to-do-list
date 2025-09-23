@@ -7,14 +7,22 @@
     body { font-family: Arial, sans-serif; margin:2rem; }
     h1 { color:#333; }
     ul { list-style:none; padding:0; }
-    li { padding:0.5rem 0; border-bottom:1px solid #ccc; }
+    li { padding:0.5rem 0; border-bottom:1px solid #ccc; display:flex; justify-content:space-between; align-items:center; }
     form { margin-top:1rem; }
     input { padding:0.5rem; width:200px; }
     button { padding:0.5rem 1rem; }
+    .delete-btn { background:red; color:white; border:none; border-radius:5px; cursor:pointer; }
+    .fade-out {
+      opacity: 0;
+      transition: opacity 0.5s ease, height 0.5s ease, margin 0.5s ease;
+      height: 0;
+      margin: 0;
+    }
   </style>
 </head>
 <body>
   <h1>My To-Do List</h1>
+  
   <ul id="taskList"></ul>
   <form id="taskForm">
     <input type="text" id="taskName" placeholder="New Task" required />

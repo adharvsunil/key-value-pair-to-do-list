@@ -4,6 +4,7 @@ const cors = require("cors");
 const AWS = require("aws-sdk");
 const bcrypt = require("bcrypt");
 require('dotenv').config();
+
 const app = express();
 
 // ------------------- CORS -------------------
@@ -13,9 +14,7 @@ const corsOptions = {
   allowedHeaders: ["Content-Type"],
   optionsSuccessStatus: 200,
 };
-
-app.use(cors(corsOptions)); // Handles CORS for all routes
-// No need for app.options("*") anymore
+app.use(cors(corsOptions));
 
 // ------------------- Body Parsing -------------------
 app.use(bodyParser.json());
@@ -128,6 +127,29 @@ app.post("/tasks", async (req, res) => {
   } catch (err) {
     console.error("Add task error:", err);
     res.status(500).json({ error: "Could not add task" });
+  }
+});
+
+// Delete task
+app.delete("/tasks/:username/:taskId", async (req, res) => {
+  try {
+    let { username, taskId } = req.params;
+    username = decodeURIComponent(username);
+    taskId = decodeURIComponent(taskId);
+
+    if (!username || !taskId) return res.status(400).json({ error: "Username and taskId required" });
+
+    const params = {
+      TableName: TASKS_TABLE,
+      Key: { username, taskId },
+    };
+
+    await docClient.delete(params).promise();
+    res.json({ success: true, message: "Task deleted" });
+
+  } catch (err) {
+    console.error("Delete task error:", err);
+    res.status(500).json({ error: "Could not delete task" });
   }
 });
 
