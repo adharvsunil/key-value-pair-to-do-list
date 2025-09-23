@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:2rem; }
+    h1 { color:#333; }
+    ul { list-style:none; padding:0; }
+    li { padding:0.5rem 0; border-bottom:1px solid #ccc; }
+    form { margin-top:1rem; }
+    input { padding:0.5rem; width:200px; }
+    button { padding:0.5rem 1rem; }
+  </style>
+</head>
+<body>
+  <h1>My To-Do List</h1>
+  <ul id="taskList"></ul>
+  <form id="taskForm">
+    <input type="text" id="taskName" placeholder="New Task" required />
+    <button type="submit">Add Task</button>
+  </form>
+  <script src="script.js"></script>
+</body>
+</html>
