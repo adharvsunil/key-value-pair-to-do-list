@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const AWS = require("aws-sdk");
 const bcrypt = require("bcrypt");
-require('dotenv').config();
+require("dotenv").config();
 
 const app = express();
 
@@ -36,13 +36,11 @@ const TASKS_TABLE = "Tasks";
 // Register user
 app.post("/register", async (req, res) => {
   try {
-    if (!req.body) return res.status(400).json({ error: "Request body missing" });
-
     const { username, password } = req.body;
-    if (!username || !password) return res.status(400).json({ error: "Username and password required" });
+    if (!username || !password)
+      return res.status(400).json({ error: "Username and password required" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const params = {
       TableName: USERS_TABLE,
       Item: { username, password: hashedPassword },
@@ -50,15 +48,11 @@ app.post("/register", async (req, res) => {
     };
 
     await docClient.put(params).promise();
-    console.log(`User '${username}' registered successfully`);
     res.json({ success: true, message: "User registered" });
-
   } catch (err) {
     console.error("Register error:", err);
     if (err.code === "ConditionalCheckFailedException") {
       res.status(400).json({ error: "Username already exists" });
-    } else if (err.code === "AccessDeniedException") {
-      res.status(403).json({ error: "Access denied to DynamoDB. Check IAM policy." });
     } else {
       res.status(500).json({ error: "Internal server error" });
     }
@@ -68,10 +62,9 @@ app.post("/register", async (req, res) => {
 // Login user
 app.post("/login", async (req, res) => {
   try {
-    if (!req.body) return res.status(400).json({ error: "Request body missing" });
-
     const { username, password } = req.body;
-    if (!username || !password) return res.status(400).json({ error: "Username and password required" });
+    if (!username || !password)
+      return res.status(400).json({ error: "Username and password required" });
 
     const params = { TableName: USERS_TABLE, Key: { username } };
     const data = await docClient.get(params).promise();
@@ -79,10 +72,10 @@ app.post("/login", async (req, res) => {
     if (!data.Item) return res.status(400).json({ error: "User not found" });
 
     const validPassword = await bcrypt.compare(password, data.Item.password);
-    if (!validPassword) return res.status(401).json({ error: "Invalid password" });
+    if (!validPassword)
+      return res.status(401).json({ error: "Invalid password" });
 
     res.json({ success: true, message: "Login successful" });
-
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Login failed" });
@@ -101,29 +94,28 @@ app.get("/tasks/:username", async (req, res) => {
 
     const data = await docClient.query(params).promise();
     res.json(data.Items);
-
   } catch (err) {
     console.error("Tasks fetch error:", err);
     res.status(500).json({ error: "Could not fetch tasks" });
   }
 });
 
-// Add task
+// Add new task
 app.post("/tasks", async (req, res) => {
   try {
-    if (!req.body) return res.status(400).json({ error: "Request body missing" });
-
     const { username, taskId, task } = req.body;
-    if (!username || !taskId || !task) return res.status(400).json({ error: "username, taskId, and task required" });
+    if (!username || !taskId || !task)
+      return res
+        .status(400)
+        .json({ error: "username, taskId, and task required" });
 
     const params = {
       TableName: TASKS_TABLE,
-      Item: { username, taskId, task },
+      Item: { username, taskId, task, completed: false },
     };
 
     await docClient.put(params).promise();
     res.json({ success: true, message: "Task added" });
-
   } catch (err) {
     console.error("Add task error:", err);
     res.status(500).json({ error: "Could not add task" });
@@ -137,8 +129,6 @@ app.delete("/tasks/:username/:taskId", async (req, res) => {
     username = decodeURIComponent(username);
     taskId = decodeURIComponent(taskId);
 
-    if (!username || !taskId) return res.status(400).json({ error: "Username and taskId required" });
-
     const params = {
       TableName: TASKS_TABLE,
       Key: { username, taskId },
@@ -146,13 +136,36 @@ app.delete("/tasks/:username/:taskId", async (req, res) => {
 
     await docClient.delete(params).promise();
     res.json({ success: true, message: "Task deleted" });
-
   } catch (err) {
     console.error("Delete task error:", err);
     res.status(500).json({ error: "Could not delete task" });
   }
 });
 
+// ✅ Mark task as completed / toggle
+app.put("/tasks/:username/:taskId", async (req, res) => {
+  try {
+    const { username, taskId } = req.params;
+    const { completed } = req.body;
+
+    const params = {
+      TableName: TASKS_TABLE,
+      Key: { username, taskId },
+      UpdateExpression: "set completed = :c",
+      ExpressionAttributeValues: { ":c": completed },
+      ReturnValues: "UPDATED_NEW",
+    };
+
+    await docClient.update(params).promise();
+    res.json({ success: true, message: "Task updated" });
+  } catch (err) {
+    console.error("Update task error:", err);
+    res.status(500).json({ error: "Could not update task" });
+  }
+});
+
 // ------------------- Start server -------------------
 const PORT = 3000;
-app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
+app.listen(PORT, () =>
+  console.log(`✅ Server running on http://localhost:${PORT}`)
+);
