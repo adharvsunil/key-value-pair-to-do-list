@@ -3,37 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <title>Login - ToDo List</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: linear-gradient(135deg,#667eea,#764ba2);
-           display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
-    .login-container { background:white; padding:2rem; border-radius:10px; width:100%; max-width:400px; box-shadow:0 15px 35px rgba(0,0,0,0.1);}
-    h2 { text-align:center; margin-bottom:1.5rem; }
-    .form-group { margin-bottom:1rem; }
-    label { font-weight:bold; display:block; margin-bottom:0.5rem; }
-    input { width:100%; padding:0.75rem; border:2px solid #ddd; border-radius:5px; font-size:1rem; }
-    .btn { width:100%; padding:0.75rem; border:none; border-radius:5px; font-size:1rem; margin-top:0.5rem; cursor:pointer; }
-    .btn-primary { background:#667eea; color:white; }
-    .btn-primary:hover { background:#5a6fd8; }
-    .btn-secondary { background:#6c757d; color:white; }
-    .btn-secondary:hover { background:#5a6268; }
-  </style>
+
+<!-- Link to the external CSS -->
+  <link rel="stylesheet" href="../css/login.css">
+
 </head>
 <body>
-  <div class="login-container">
-    <h2>Welcome to ToDo List</h2>
-    <form id="authForm">
-      <div class="form-group">
-        <label>Username:</label>
-        <input type="text" id="username" required>
-      </div>
-      <div class="form-group">
-        <label>Password:</label>
-        <input type="password" id="password" required>
-      </div>
-      <button type="submit" class="btn btn-primary">Login</button>
-      <button type="button" id="registerBtn" class="btn btn-secondary">Register</button>
-    </form>
+
+<div class="split-container">
+
+    <!-- LEFT SIDE -->
+    <div class="left-panel">
+      <h1>TaskMate</h1>
+      <p>Organize your day, one task at a time.</p>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="right-panel">
+      <h2>Welcome Back</h2>
+      <p>Login or Register to continue.</p>
+
+      <form id="authForm">
+        <div class="form-group">
+          <label>Username:</label>
+          <input type="text" id="username" placeholder="Enter username" required>
+        </div>
+        <div class="form-group">
+          <label>Password:</label>
+          <input type="password" id="password" placeholder="Enter password" required>
+        </div>
+
+        <div class="button-group">
+          <button type="submit" id="loginBtn" class="btn btn-primary">Login</button>
+          <button type="button" id="registerBtn" class="btn btn-secondary">Register</button>
+        </div>
+      </form>
+    </div>
   </div>
+
+  
+ <!-- JavaScript starts hereL DO NOT CHANGE-->
 
 <script>
 const apiUrl = "http://localhost:3000";
